@@ -35,7 +35,7 @@ class PixelMoonDrawable : Drawable() {
     }
     private val mClearXfermode: Xfermode
 
-    private val mCoreColor: Int = Color.rgb(180, 138, 255)
+    private val mCoreColor: Int = Color.rgb(169, 217, 255)
     private var mAlpha: Float = 1f
     private var mBounds: Rect
     private var mCoreRadius = 0f

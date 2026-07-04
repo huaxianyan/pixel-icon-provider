@@ -12,6 +12,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    # 显式赋予工作流向你的仓库写入 Release 和上传 APK 的权限
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -46,7 +50,7 @@ jobs:
             echo "VERSION_TAG=snapshot-${GITHUB_SHA::7}" >> $GITHUB_ENV
           fi
 
-      # 核心修改 1：为你自己的固定证书进行 APK 签名（去除了原官方仓库的限制条件）
+      # 核心修复：将版本号修正为官方标准的 v1
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         id: sign_app
@@ -57,7 +61,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
-      # 核心修改 2：重命名并计算 SHA256 校验和
+      # 重命名并计算 SHA256 校验和
       - name: Prepare APKs with checksums
         run: |
           set -e
@@ -65,17 +69,17 @@ jobs:
           sha256=`sha256sum pixel-icon-provider-${{ env.VERSION_TAG }}.apk | awk '{ print $1 }'`
           echo "APK_SHA256=$sha256" >> $GITHUB_ENV
 
-      # 核心修改 3：无论通过什么方式触发，都把打包好的固定签名 APK 上传到 Artifacts（最方便下载）
+      # 无论通过什么方式触发，都把打包好的 APK 上传到 Artifacts（网盘）供随手下载
       - name: Upload Signed APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: pixel-icon-provider-${{ env.VERSION_TAG }}
           path: pixel-icon-provider-${{ env.VERSION_TAG }}.apk
 
-      # 核心修改 4：只有当你推送 v* 标签时，才在你的 fork 仓库里创建 GitHub Release 草稿
+      # 只有当你推送 v* 标签时，才在你的仓库里创建 GitHub Release 草稿
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.VERSION_TAG }}
           name: Pixel Icon Provider ${{ env.VERSION_TAG }}
