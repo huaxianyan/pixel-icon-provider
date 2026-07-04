@@ -48,7 +48,7 @@ jobs:
 
       # 核心修改 1：为你自己的固定证书进行 APK 签名（去除了原官方仓库的限制条件）
       - name: Sign APK
-        uses: r0adkll/sign-android-release@v1
+        uses: r0adkll/sign-android-release@v1.2.4
         id: sign_app
         with:
           releaseDirectory: app/build/outputs/apk/release
@@ -75,7 +75,7 @@ jobs:
       # 核心修改 4：只有当你推送 v* 标签时，才在你的 fork 仓库里创建 GitHub Release 草稿
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.VERSION_TAG }}
           name: Pixel Icon Provider ${{ env.VERSION_TAG }}
