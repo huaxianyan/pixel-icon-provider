@@ -48,7 +48,7 @@ jobs:
 
       # 核心修改 1：为你自己的固定证书进行 APK 签名（去除了原官方仓库的限制条件）
       - name: Sign APK
-        uses: r0adkll/sign-android-release@v1.2.4
+        uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
           releaseDirectory: app/build/outputs/apk/release
